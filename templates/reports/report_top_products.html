@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Top Products — SuperShop POS{% endblock %}
+{% block page_title %}Top Selling Products{% endblock %}
+
+{% block content %}
+<div class="table-card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Product</th>
+        <th>Total Qty Sold</th>
+        <th>Total Revenue</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in top_products %}
+      <tr>
+        <td>
+          {% if forloop.counter == 1 %}🥇
+          {% elif forloop.counter == 2 %}🥈
+          {% elif forloop.counter == 3 %}🥉
+          {% else %}#{{ forloop.counter }}
+          {% endif %}
+        </td>
+        <td><strong>{{ item.product__name }}</strong></td>
+        <td>{{ item.total_qty }}</td>
+        <td><strong>৳{{ item.total_revenue }}</strong></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-muted py-4">No sales data available yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Daily Report — SuperShop POS{% endblock %}
+{% block page_title %}Daily Sales Report{% endblock %}
+
+{% block content %}
+
+<!-- Summary Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Date</div>
+      <div class="stat-value" style="font-size:1.3rem;">{{ today|date:"d M Y" }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Total Transactions</div>
+      <div class="stat-value">{{ total_transactions }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-label">Total Revenue</div>
+      <div class="stat-value" style="color:#059669;">৳{{ total_revenue }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Sales Table -->
+<div class="table-card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Sale #</th>
+        <th>Customer</th>
+        <th>Time</th>
+        <th>Amount</th>
+        <th>Invoice</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sale in sales %}
+      <tr>
+        <td><strong>#{{ sale.id }}</strong></td>
+        <td>{{ sale.customer_name }}</td>
+        <td>{{ sale.date|date:"h:i A" }}</td>
+        <td><strong>৳{{ sale.total_amount }}</strong></td>
+        <td>
+          <a href="{% url 'invoice' sale.pk %}" class="btn btn-sm btn-outline-primary" id="daily-invoice-{{ sale.pk }}">
+            <i class="bi bi-eye"></i>
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" class="text-center text-muted py-4">No sales today.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
