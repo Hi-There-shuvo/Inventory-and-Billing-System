@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Login — SuperShop POS{% endblock %}
+
+{% block auth_content %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center"
+     style="background: linear-gradient(135deg, #1a1f36 0%, #2d3561 100%);">
+  <div style="width: 100%; max-width: 400px; padding: 20px;">
+    <div class="text-center mb-4">
+      <div style="background:linear-gradient(135deg,#667eea,#764ba2);border-radius:16px;width:64px;height:64px;display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px;">🛒</div>
+      <h2 style="color:#fff;font-weight:700;">SuperShop POS</h2>
+      <p style="color:rgba(255,255,255,0.55);font-size:0.9rem;">Sign in to your account</p>
+    </div>
+    <div class="form-card">
+      <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+          <div class="alert alert-danger">Invalid username or password.</div>
+        {% endif %}
+        <div class="mb-3">
+          <label for="id_username" class="form-label">Username</label>
+          <input type="text" name="username" id="id_username" class="form-control" placeholder="Enter username" autofocus>
+        </div>
+        <div class="mb-4">
+          <label for="id_password" class="form-label">Password</label>
+          <input type="password" name="password" id="id_password" class="form-control" placeholder="Enter password">
+        </div>
+        <button type="submit" class="btn btn-primary w-100" id="login-btn">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
