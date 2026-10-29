@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}New Sale — SuperShop POS{% endblock %}
+{% block page_title %}New Sale / Billing{% endblock %}
+
+{% block content %}
+<form method="post" id="billing-form">
+  {% csrf_token %}
+  <div class="row g-4">
+
+    <!-- Left: Product Selection -->
+    <div class="col-md-8">
+      <div class="form-card">
+        <h6 class="fw-bold mb-3">Select Products</h6>
+        <div class="mb-3">
+          <input type="text" id="product-filter" class="form-control" placeholder="🔍 Filter products...">
+        </div>
+        <div class="table-responsive">
+          <table class="table align-middle" id="products-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Qty</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+              <tr class="product-row">
+                <td>
+                  <strong>{{ product.name }}</strong><br>
+                  <small class="text-muted">{{ product.category.name|default:"No category" }}</small>
+                </td>
+                <td>৳{{ product.price }}</td>
+                <td>
+                  {% if product.is_low_stock %}
+                    <span class="badge-low-stock">{{ product.stock }}</span>
+                  {% else %}
+                    {{ product.stock }}
+                  {% endif %}
+                </td>
+                <td style="width:130px;">
+                  <input type="hidden" name="product_id" value="{{ product.pk }}">
+                  <input type="number" name="quantity" value="0" min="0" max="{{ product.stock }}"
+                    class="form-control qty-input"
+                    data-price="{{ product.price }}"
+                    data-name="{{ product.name }}"
+                    id="qty-{{ product.pk }}"
+                    style="width:100px;">
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="4" class="text-center text-muted">No products available.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div class="col-md-4">
+      <div class="form-card mb-3">
+        <h6 class="fw-bold mb-3">Customer</h6>
+        <input type="text" name="customer_name" class="form-control" placeholder="Customer name (optional)" id="customer-name-input">
+      </div>
+      <div class="form-card">
+        <h6 class="fw-bold mb-3">Order Summary</h6>
+        <div id="order-summary" class="mb-3">
+          <p class="text-muted small text-center">Select products and enter quantities.</p>
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+          <span>Total:</span>
+          <span id="grand-total">৳0.00</span>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" id="complete-sale-btn">
+          <i class="bi bi-check-circle me-2"></i>Complete Sale
+        </button>
+      </div>
+    </div>
+
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const qtyInputs = document.querySelectorAll('.qty-input');
+  const orderSummary = document.getElementById('order-summary');
+  const grandTotal = document.getElementById('grand-total');
+
+  function updateSummary() {
+    let total = 0;
+    let html = '';
+    qtyInputs.forEach(input => {
+      const qty = parseInt(input.value) || 0;
+      const price = parseFloat(input.dataset.price);
+      const name = input.dataset.name;
+      if (qty > 0) {
+        const subtotal = qty * price;
+        total += subtotal;
+        html += `<div class="d-flex justify-content-between mb-1 small">
+          <span>${name} x${qty}</span>
+          <span>৳${subtotal.toFixed(2)}</span>
+        </div>`;
+      }
+    });
+    orderSummary.innerHTML = html || '<p class="text-muted small text-center">No items selected.</p>';
+    grandTotal.textContent = '৳' + total.toFixed(2);
+  }
+
+  qtyInputs.forEach(input => input.addEventListener('input', updateSummary));
+
+  // Product filter
+  document.getElementById('product-filter').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.product-row').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  });
+</script>
+{% endblock %}

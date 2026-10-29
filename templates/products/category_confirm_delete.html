@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Delete Category — SuperShop POS{% endblock %}
+{% block page_title %}Delete Category{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="form-card text-center">
+      <div style="font-size:3rem;margin-bottom:12px;">🗂️</div>
+      <h5 class="fw-bold mb-1">Delete "{{ category.name }}"?</h5>
+      <p class="text-muted mb-4" style="font-size:0.9rem;">
+        This will permanently delete this category. Products in this category will become uncategorized.
+      </p>
+      <form method="post" class="d-flex gap-2 justify-content-center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger" id="confirm-delete-category-btn">
+          <i class="bi bi-trash me-1"></i> Yes, Delete
+        </button>
+        <a href="{% url 'category_list' %}" class="btn btn-outline-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Categories — SuperShop POS{% endblock %}
+{% block page_title %}Categories{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'category_add' %}" class="btn btn-primary btn-sm" id="add-category-btn">
+    <i class="bi bi-plus-lg me-1"></i> Add Category
+  </a>
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Category Name</th>
+        <th>Products</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cat in categories %}
+      <tr>
+        <td>{{ cat.id }}</td>
+        <td><strong>{{ cat.name }}</strong></td>
+        <td>
+          <span class="badge" style="background:#e0f2fe;color:#0369a1;border-radius:20px;padding:4px 10px;font-size:0.78rem;font-weight:600;">
+            {{ cat.product_count }} product{{ cat.product_count|pluralize }}
+          </span>
+        </td>
+        <td>
+          <a href="{% url 'category_edit' cat.pk %}" class="btn btn-sm btn-outline-secondary me-1" id="edit-category-{{ cat.pk }}">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <a href="{% url 'category_delete' cat.pk %}" class="btn btn-sm btn-outline-danger" id="delete-category-{{ cat.pk }}">
+            <i class="bi bi-trash"></i>
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-muted py-4">No categories yet. <a href="{% url 'category_add' %}">Add one now</a>.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

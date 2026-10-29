@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Invoice #{{ sale.id }} — SuperShop POS{% endblock %}
+{% block page_title %}Invoice #{{ sale.id }}{% endblock %}
+
+{% block topbar_actions %}
+  <button onclick="window.print()" class="btn btn-outline-secondary btn-sm" id="print-invoice-btn">
+    <i class="bi bi-printer me-1"></i> Print
+  </button>
+  <a href="{% url 'billing_new' %}" class="btn btn-primary btn-sm" id="new-sale-after-invoice">
+    <i class="bi bi-plus-lg me-1"></i> New Sale
+  </a>
+{% endblock %}
+
+{% block content %}
+<div class="invoice-box">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-start mb-4">
+    <div>
+      <div style="font-size:1.8rem;font-weight:700;color:#1a1f36;">🛒 SuperShop</div>
+      <div class="text-muted" style="font-size:0.85rem;">Point of Sale System</div>
+    </div>
+    <div class="text-end">
+      <!-- <div style="font-size:1.4rem;font-weight:700;color:#4f46e5;">INVOICE</div> 
+      <div class="text-muted" style="font-size:0.85rem;">#{{ sale.id }}</div> -->
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Sale Info -->
+  <div class="row mb-4">
+    <div class="col">
+      <div class="text-muted small">BILLED TO</div>
+      <div class="fw-bold">{{ sale.customer_name }}</div>
+    </div>
+    <div class="col text-center">
+      <div class="text-muted small">SERVED BY</div>
+      <div class="fw-bold">{{ sale.staff.get_full_name|default:sale.staff.username }}</div>
+    </div>
+    <div class="col text-end">
+      <div class="text-muted small">DATE</div>
+      <div class="fw-bold">{{ sale.date|date:"d M Y, h:i A" }}</div>
+    </div>
+  </div>
+
+  <!-- Items Table -->
+  <table class="table table-bordered">
+    <thead style="background:#f9fafb;">
+      <tr>
+        <th>#</th>
+        <th>Product</th>
+        <th class="text-end">Unit Price</th>
+        <th class="text-center">Qty</th>
+        <th class="text-end">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ item.get_product_name }}</td>
+        <td class="text-end">৳{{ item.unit_price }}</td>
+        <td class="text-center">{{ item.quantity }}</td>
+        <td class="text-end">৳{{ item.subtotal }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4" class="text-end fw-bold">TOTAL</td>
+        <td class="text-end fw-bold" style="font-size:1.1rem;color:#4f46e5;">৳{{ sale.total_amount }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="text-center mt-4 text-muted" style="font-size:0.85rem;">
+    Thank you for shopping at SuperShop! 🙏
+  </div>
+</div>
+
+<style>
+@media print {
+  .sidebar, .topbar, .alert { display: none !important; }
+  .main-content { margin-left: 0 !important; }
+  .content-area { padding: 0 !important; }
+}
+</style>
+{% endblock %}

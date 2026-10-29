@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Products — SuperShop POS{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block topbar_actions %}
+  {% if user.is_staff %}
+  <a href="{% url 'product_add' %}" class="btn btn-primary btn-sm" id="add-product-btn">
+    <i class="bi bi-plus-lg me-1"></i> Add Product
+  </a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- Search -->
+<form method="get" class="mb-4">
+  <div class="input-group" style="max-width:400px;">
+    <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search products..." id="product-search">
+    <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+  </div>
+</form>
+
+<div class="table-card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Status</th>
+        {% if user.is_staff %}<th>Actions</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.id }}</td>
+        <td><strong>{{ product.name }}</strong></td>
+        <td>{{ product.category.name|default:"—" }}</td>
+        <td>৳{{ product.price }}</td>
+        <td>{{ product.stock }}</td>
+        <td>
+          {% if product.is_low_stock %}
+            <span class="badge-low-stock"><i class="bi bi-exclamation-circle me-1"></i>Low Stock</span>
+          {% else %}
+            <span class="badge-ok-stock"><i class="bi bi-check-circle me-1"></i>OK</span>
+          {% endif %}
+        </td>
+        {% if user.is_staff %}
+        <td>
+          <a href="{% url 'product_edit' product.pk %}" class="btn btn-sm btn-outline-secondary me-1" id="edit-product-{{ product.pk }}">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-outline-danger" id="delete-product-{{ product.pk }}">
+            <i class="bi bi-trash"></i>
+          </a>
+        </td>
+        {% endif %}
+      </tr>
+      {% empty %}
+      <tr><td colspan="{% if user.is_staff %}7{% else %}6{% endif %}" class="text-center text-muted py-4">No products found.{% if user.is_staff %} <a href="{% url 'product_add' %}">Add one now</a>.{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
