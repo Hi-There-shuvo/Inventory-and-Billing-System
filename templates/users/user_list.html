@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Users — SuperShop POS{% endblock %}
+{% block page_title %}User Management{% endblock %}
+
+{% block topbar_actions %}
+  {% if request.user.is_superuser %}
+    <a href="{% url 'user_add' %}" class="btn btn-primary btn-sm" id="add-user-btn">
+      <i class="bi bi-person-plus me-1"></i> Add User
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="table-card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Username</th>
+        <th>Full Name</th>
+        <th>Role</th>
+        <th>Joined</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td><strong>{{ u.username }}</strong></td>
+        <td>{{ u.get_full_name|default:"—" }}</td>
+        <td>
+          {% if u.is_superuser %}
+            <span class="badge bg-danger">Superuser</span>
+          {% elif u.is_staff %}
+            <span class="badge bg-primary">Admin</span>
+          {% else %}
+            <span class="badge bg-secondary">Cashier</span>
+          {% endif %}
+        </td>
+        <td>{{ u.date_joined|date:"d M Y" }}</td>
+        <td>
+          {% if u != request.user %}
+          <a href="{% url 'user_delete' u.pk %}" class="btn btn-sm btn-outline-danger" id="delete-user-{{ u.pk }}">
+            <i class="bi bi-trash"></i>
+          </a>
+          {% else %}
+          <span class="text-muted small">(you)</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
