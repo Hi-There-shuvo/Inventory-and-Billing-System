@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Restock — SuperShop POS{% endblock %}
+{% block page_title %}Restock Product{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="form-card">
+      <div class="mb-3">
+        <div class="text-muted small">Product</div>
+        <div class="fw-bold fs-5">{{ product.name }}</div>
+        <div class="text-muted small mt-1">Current Stock: <strong>{{ product.stock }}</strong></div>
+      </div>
+      <hr>
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="{{ form.quantity.id_for_label }}" class="form-label">Quantity to Add</label>
+          {{ form.quantity }}
+          {% if form.quantity.errors %}
+            <div class="text-danger small mt-1">{{ form.quantity.errors }}</div>
+          {% endif %}
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" id="restock-submit-btn">
+            <i class="bi bi-plus-circle me-1"></i> Add Stock
+          </button>
+          <a href="{% url 'inventory' %}" class="btn btn-outline-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Inventory — SuperShop POS{% endblock %}
+{% block page_title %}Inventory Overview{% endblock %}
+
+{% block content %}
+<div class="table-card">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Product</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{{ product.id }}</td>
+        <td><strong>{{ product.name }}</strong></td>
+        <td>{{ product.category.name|default:"—" }}</td>
+        <td>৳{{ product.price }}</td>
+        <td>
+          <span style="font-weight:600; {% if product.is_low_stock %} color: #dc2626 {% endif %}">
+            {{ product.stock }}
+          </span>
+        </td>
+        <td>
+          {% if product.stock == 0 %}
+            <span class="badge bg-danger">Out of Stock</span>
+          {% elif product.is_low_stock %}
+            <span class="badge-low-stock"><i class="bi bi-exclamation-circle me-1"></i>Low Stock</span>
+          {% else %}
+            <span class="badge-ok-stock"><i class="bi bi-check-circle me-1"></i>In Stock</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'restock' product.pk %}" class="btn btn-sm btn-outline-primary" id="restock-btn-{{ product.pk }}">
+            <i class="bi bi-plus-circle me-1"></i>Restock
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">No products found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
